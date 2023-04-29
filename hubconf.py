@@ -30,6 +30,7 @@ class NuWave2Wrapper():
         if type(input) in [str, Path]:
             wav, inp_sr = torchaudio.load(input)
             assert inp_sr == self.input_sr, f"input audio's sample rate {inp_sr} is not the expected {self.input_sr}"
+        else: wav = input
         assert wav.shape[0] == 1, f"Only mono audio input currently supported!"
         wav: Tensor = wav / wav.abs().max()
         wav = wav.squeeze().cpu().numpy()
@@ -73,6 +74,6 @@ def nuwave2_16khz(pretrained=True, progress=True, device='cuda') -> NuWave2Wrapp
         )
         model.load_state_dict(ckpt['state_dict'])
     model.eval()
-    print(f"[nu-wave2] Generator loaded with {sum([p.numel() for p in model.parameters()]):,d} parameters.")
+    print(f"[nu-wave2] model loaded with {sum([p.numel() for p in model.parameters()]):,d} parameters.")
     wrapper = NuWave2Wrapper(model, hparams, hi, input_sr=sr, device=device)
     return wrapper
