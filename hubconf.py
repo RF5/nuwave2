@@ -55,7 +55,7 @@ def nuwave2_16khz(pretrained=True, progress=True, device='cuda') -> NuWave2Wrapp
     """ Load pretrained nuwave2 model. """
     cp = Path(__file__).parent.absolute()
 
-    hparams = OC.load(str(cp/'/hparameter.yaml'))
+    hparams = OC.load(str(cp/'hparameter.yaml'))
     model = NuWave2(hparams).to(device)
     model.eval()
     stft = STFTMag()
