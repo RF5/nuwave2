@@ -21,6 +21,7 @@ class NuWave2Wrapper():
         self.input_sr = input_sr
         self.hi_cutoff = hi_cutoff
         self.device = device
+        self.out_sr = hparams.audio.sampling_rate
 
     @torch.inference_mode()
     def infer(self, input: str | Tensor | Path):
@@ -49,7 +50,7 @@ class NuWave2Wrapper():
         band = band.unsqueeze(0).to(self.device)
         wav_recon, wav_list = self.model.inference(wav_l, band, steps, noise_schedule)
 
-        wav_recon = torch.clamp(wav_recon, min=-1, max=1 - torch.finfo(torch.float16).eps)
+        wav_recon = torch.clamp(wav_recon, min=-1, max=1 - torch.finfo(torch.float16).eps).cpu()
         return wav_recon
 
 def nuwave2_16khz(pretrained=True, progress=True, device='cuda') -> NuWave2Wrapper:
