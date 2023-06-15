@@ -1,15 +1,14 @@
 import torch
 import torch.nn as nn
-import pytorch_lightning as pl
 
 #import dataloader
 from diffusion import Diffusion
 
 
-class NuWave2(pl.LightningModule):
+class NuWave2(nn.Module):
     def __init__(self, hparams, train=True):
         super().__init__()
-        self.save_hyperparameters(hparams)
+        self.hparams = hparams
 
         self.model = Diffusion(hparams)
 
