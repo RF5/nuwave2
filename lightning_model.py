@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import pytorch_lightning as pl
 
-import dataloader
+#import dataloader
 from diffusion import Diffusion
 
 
@@ -107,11 +107,3 @@ class NuWave2(pl.LightningModule):
                                weight_decay=self.hparams.train.weight_decay)
         return opt
 
-    def train_dataloader(self):
-        return dataloader.create_vctk_dataloader(self.hparams, 0)
-
-    def val_dataloader(self):
-        return dataloader.create_vctk_dataloader(self.hparams, 1)
-
-    def test_dataloader(self, sr):
-        return dataloader.create_vctk_dataloader(self.hparams, 2, sr)
