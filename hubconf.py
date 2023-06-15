@@ -67,13 +67,13 @@ def nuwave2_16khz(pretrained=True, progress=True, device='cuda') -> NuWave2Wrapp
     hi = highcut / nyq
     
     if pretrained:
-        url = "https://github.com/RF5/nuwave2/releases/download/v1.0/nuwave2.ckpt"
+        url = "https://github.com/RF5/nuwave2/releases/download/v1.0/nuwave2_torch.ckpt"
         ckpt = torch.hub.load_state_dict_from_url(
             url,
             map_location=device,
             progress=progress
         )
-        model.load_state_dict(ckpt['state_dict'])
+        model.load_state_dict(ckpt)
     model.eval()
     print(f"[nu-wave2] model loaded with {sum([p.numel() for p in model.parameters()]):,d} parameters.")
     wrapper = NuWave2Wrapper(model, hparams, hi, input_sr=sr, device=device)
