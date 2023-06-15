@@ -1,4 +1,4 @@
-dependencies = ['torch', 'torchaudio', 'numpy', 'scipy', 'omegaconf', 'pytorch_lightning', 'prefetch_generator']
+dependencies = ['torch', 'torchaudio', 'numpy', 'scipy', 'omegaconf', 'prefetch_generator']
 
 
 from lightning_model import NuWave2
