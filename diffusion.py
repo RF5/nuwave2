@@ -56,7 +56,10 @@ class Diffusion(nn.Module):
             noise = z
 
         alpha_sq_s, sigma_sq_s = torch.sigmoid(logsnr_s), torch.sigmoid(-logsnr_s)
-
+        sigma_sq_t = sigma_sq_t[:, None]
+        alpha_sq_t = alpha_sq_t[:, None]
+        alpha_sq_s = alpha_sq_s[:, None]
+        sigma_sq_s = sigma_sq_s[:, None]
         pred = (y - torch.sqrt(sigma_sq_t) * noise) / torch.sqrt(alpha_sq_t)
 
         denoised = torch.sqrt(alpha_sq_s) * pred + torch.sqrt(sigma_sq_s) * noise
