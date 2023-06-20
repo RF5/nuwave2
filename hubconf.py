@@ -52,6 +52,29 @@ class NuWave2Wrapper():
 
         wav_recon = torch.clamp(wav_recon, min=-1, max=1 - torch.finfo(torch.float16).eps).cpu()
         return wav_recon
+        
+    @torch.inference_mode()
+    def batch_infer(self, wav):
+        """ Perform inference on mono audio of shape (bs, T), returning result in format (bs, T). """
+        steps = 8
+        noise_schedule = eval(self.hparams.dpm.infer_schedule)
+        wav = wav / wav.abs().max()
+        wav = wav.cpu()
+    
+        # upsample to the original sampling rate
+        wav_l = torchaudio.functional.resample(wav, self.input_sr, self.hparams.audio.sampling_rate)
+        wav_l = wav_l[:, :wav_l.shape[-1] - (wav_l.shape[-1] % self.hparams.audio.hop_length)]
+    
+        fft_size = self.hparams.audio.filter_length // 2 + 1
+        band = torch.zeros(fft_size, dtype=torch.int64)
+        band[:int(self.hi_cutoff * fft_size)] = 1
+    
+        wav_l = wav_l.float().to(self.device)
+        band = band.unsqueeze(0).to(self.device).repeat(wav.shape[0], 1)
+        wav_recon, wav_list = self.model.inference(wav_l, band, steps, noise_schedule)
+    
+        wav_recon = torch.clamp(wav_recon, min=-1, max=1 - torch.finfo(torch.float16).eps).cpu()
+        return wav_recon
 
 def nuwave2_16khz(pretrained=True, progress=True, device='cuda') -> NuWave2Wrapper:
     """ Load pretrained nuwave2 model. """
